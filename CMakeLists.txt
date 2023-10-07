@@ -38,5 +38,6 @@ enable_testing()
 add_subdirectory(googletest)
 add_executable(test_app tests/test_main.cpp) 
 target_link_libraries(test_app gtest_main)
+target_link_libraries(test_app exp_calculator)
 
 add_test(NAME MyTest COMMAND test_app)

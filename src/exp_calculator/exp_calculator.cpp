@@ -151,10 +151,10 @@ double Calculator::statement()
 
 int Calculator::calculate()
 {
+	std::cout << std::fixed;
 	while (cin)
 		try
 		{
-			cout << "> ";
 			Token t = ts.get_token();
 			while (t.type == Token::Types::EXPRESSION_END_FLAG)
 				t = ts.get_token();
@@ -163,7 +163,7 @@ int Calculator::calculate()
 				return 0;
 
 			ts.put_back(t);
-			cout << "= " << std::setprecision(12) << statement() << endl;
+			cout << "= " << std::setprecision(4) << statement() << endl;
 		}
 		catch (exception &e)
 		{
