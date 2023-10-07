@@ -32,7 +32,9 @@ TEST(calculator, TestFromFile) {
                 std::cout.rdbuf(old_cout);
 
                 std::ostringstream expected_output_stream;
-                expected_output_stream << "= " << std::fixed << std::setprecision(4) << result << endl;
+                expected_output_stream << "> = " 
+                    << std::fixed << std::setprecision(4)
+                    << result << "\n> ";
                 std::string expected_output = expected_output_stream.str();
                 EXPECT_EQ(captured_output.str(), expected_output);
             } else {

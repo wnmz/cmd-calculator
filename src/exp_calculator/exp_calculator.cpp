@@ -120,7 +120,7 @@ double Calculator::sqrt() {
 
 double Calculator::declaration()
 {
-	// "let name = val | expression"
+	// handles "let name = [expression]"
 
 	Token t = ts.get_token();
 	if (t.type != Token::Types::VAR_NAME)
@@ -152,6 +152,7 @@ double Calculator::statement()
 int Calculator::calculate()
 {
 	std::cout << std::fixed;
+	std::cout << "> " << std::flush;
 	while (cin)
 		try
 		{
@@ -163,7 +164,9 @@ int Calculator::calculate()
 				return 0;
 
 			ts.put_back(t);
+
 			cout << "= " << std::setprecision(4) << statement() << endl;
+			std::cout << "> " << std::flush;
 		}
 		catch (exception &e)
 		{
