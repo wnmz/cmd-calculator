@@ -33,8 +33,8 @@ public:
 	static std::string get_token_name(Types type);
 
 	Types type;
-	std::string name;
 	double value;
+	std::string name;
 
 	Token(Types t, double val) : type(t), value(val) {};
 	Token(Types t) : type(t), value(0) {};

@@ -36,13 +36,17 @@ double Calculator::primary()
 	case Token::Types::NUMBER:
 		return t.value;
 
+	case Token::Types::OP_MINUS:
+	{
+		double val = expression();
+		return -val;
+	}
+
 	default:
-		if (var_table.has(t.name))
-		{
+		if (var_table.has(t.name)) {
 			return var_table.get(t.name);
 		}
-		else
-		{
+		else {
 			throw std::runtime_error("primary expected");
 		}
 	}
