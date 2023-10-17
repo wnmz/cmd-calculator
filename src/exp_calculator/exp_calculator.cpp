@@ -237,25 +237,10 @@ double Calculator::function() {
 	// remove ; from buffer
 	ts.get_token();
 
-	// find variable from expression
-	char var_name = -1;
-	bool redefiened = false;
-	for (const char& ch : exp_tkn.name) {
-		if (isalpha(ch)) {
-			if (ch != var_name && redefiened) {
-				throw runtime_error("Expression variable should has only 1 symbol and expression can have only 1 variable");
-			}
-			if (var_name != ch) {
-				redefiened = true;
-			}
-			var_name = ch;
-		}
-	}
-
 	while (from <= to) {
 		std::stringstream exp_stream(exp_tkn.name + ";");
 		Calculator c(exp_stream);
-		c.var_table.define(string{var_name}, from);
+		c.var_table.define("x", from);
 		out_stream << "\tF(" << from << ") = " << c.expression() << endl;
 		from += step;
 	}
