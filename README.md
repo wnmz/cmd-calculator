@@ -26,7 +26,9 @@ Command line math expressions calculator inspired by Bjarne Stroustrup's book "P
   - Example: `let a = sin(3)`
 - Nested expressions support, such as: `(5-3)^(1-(e^2 - sin(pi^2))`
 - Print function in range from A to B with step C
-  - Example: `func [2x^(-4)+sin(x^2)] from -(5^1) to 5^4 step 0.1`
+  - Syntax: `func '['expression']' from [expression] to [expression] step [expression]`
+  - Example: `func [2*x^(-4)+sin(x^2)] from -(5^1) to 5^4 step 0.1`
+  - `Warning`: function only accepts `x` as param
 
 ## Usage
 Simply write your statement, ending each line with a semicolon (;), and press Enter.
