@@ -7,7 +7,6 @@
 using namespace std;
 
 TEST(calculator, TestFromFile) {
-    Calculator calc = Calculator();
     fstream test_file;
     test_file.open("../tests/test_expressions.txt", ios::in);
     if (test_file.is_open()) {
@@ -16,27 +15,23 @@ TEST(calculator, TestFromFile) {
         while (std::getline(test_file, line)) {
             std::istringstream iss(line);
             std::string expression_str;
-            double result;
+            double expected_result;
 
-            if (std::getline(iss, expression_str, ';') && iss >> result) {
-                std::istringstream input_stream(expression_str + + ";q");
+            if (std::getline(iss, expression_str, '|') && iss >> expected_result) {
+                std::istringstream input_stream(expression_str + + ";");
+                std::ostringstream out_stream("");
 
-                std::streambuf* old_cin = std::cin.rdbuf(input_stream.rdbuf());
-
-                std::stringstream captured_output;
-                std::streambuf* old_cout = std::cout.rdbuf(captured_output.rdbuf());
-
+                Calculator calc(input_stream, out_stream);
                 calc.calculate();
 
-                std::cin.rdbuf(old_cin);
-                std::cout.rdbuf(old_cout);
+                string output = out_stream.str();
 
-                std::ostringstream expected_output_stream;
-                expected_output_stream << "> = " 
-                    << std::fixed << std::setprecision(4)
-                    << result << "\n> ";
-                std::string expected_output = expected_output_stream.str();
-                EXPECT_EQ(captured_output.str(), expected_output);
+                std::ostringstream oss;
+                oss << std::fixed << std::setprecision(calc.get_prescision()) << expected_result;
+                std::string valueAsString = oss.str();
+                string expected = "> = " + valueAsString + "\n> ";
+
+                ASSERT_EQ(output, expected);
             } else {
                 std::cerr << "Error: Invalid line format: " << line << std::endl;
             }
