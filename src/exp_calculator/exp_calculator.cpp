@@ -2,40 +2,20 @@
 
 using namespace std;
 
-const unordered_map<Token::Types, std::string> Token::token_map = {
-	{Token::Types::VAR_DEF, "let"},
-	{Token::Types::VAR_NAME, "var_name"},
-	
-	{Token::Types::ABS_FUNC_DEF, "abs"},
-	{Token::Types::SQRT_FUNC_DEF, "sqrt"},
-	{Token::Types::SIN_FUNC_DEF, "sin"},
-	{Token::Types::COS_FUNC_DEF, "cos"},
-
-	{Token::Types::FUNC_DEF, "func"},
-	{Token::Types::FUNC_PRINT_FROM, "from"},
-	{Token::Types::FUNC_PRINT_TO, "to"},
-	{Token::Types::FUNC_PRINT_STEP, "step"},
-
+Calculator::Calculator(std::istream& st) : in_stream(st.rdbuf()), ts(st), out_stream(std::cout.rdbuf())
+{
+	add_const("pi", 3.14159265358979323846);
+	add_const("e", 2.718281828459045235360);
 };
 
-std::string Token::get_token_name(Token::Types type) {
-	auto it = Token::token_map.find(type);
-	if (it != Token::token_map.end()) {
-		return it->second;
-	} else {
-		return "Unknown";
-	}
-}
-
-Token::Types Token::get_type_by_name(std::string name)
+Calculator::Calculator(std::istream& st, std::ostream& out) :
+	in_stream(st.rdbuf()),
+	ts(st),
+	out_stream(out.rdbuf())
 {
-	for (const auto& pair : token_map) {
-		if (pair.second == name) {
-			return pair.first;
-		}
-	}
-	return Token::Types::UNKNOWN;
-}
+	add_const("pi", 3.14159265358979323846);
+	add_const("e", 2.718281828459045235360);
+};
 
 double Calculator::primary()
 {
@@ -58,7 +38,7 @@ double Calculator::primary()
 	}
 
 	case Token::SQRT_FUNC_DEF:
-		return sqrt();
+		return this->sqrt();
 
 	case Token::SIN_FUNC_DEF:
 		return this->sin();
@@ -82,8 +62,8 @@ double Calculator::primary()
 		return 0;
 
 	default:
-		if (var_table.has(t.name)) {
-			return var_table.get(t.name);
+		if (var_table.has(t.str_val)) {
+			return var_table.get(t.str_val);
 		}
 		else {
 			throw std::runtime_error("primary expected");
@@ -176,29 +156,14 @@ double Calculator::abs() {
 	return std::abs(sub);
 }
 
-Calculator::Calculator(std::istream& st) : in_stream(st.rdbuf()), ts(st), out_stream(std::cout.rdbuf())
-{
-	add_const("pi", 3.14159265358979323846);
-	add_const("e", 2.718281828459045235360);
-};
-
-Calculator::Calculator(std::istream& st, std::ostream& out) : 
-	in_stream(st.rdbuf()), 
-	ts(st), 
-	out_stream(out.rdbuf()) 
-{
-	add_const("pi", 3.14159265358979323846);
-	add_const("e", 2.718281828459045235360);
-};
-
-double Calculator::declaration()
+double Calculator::var_declaration()
 {
 	// handles "let name = [expression]"
 
 	Token t = ts.get_token();
 	if (t.type != Token::Types::VAR_NAME)
 		throw std::runtime_error("expected variable name in declaration");
-	std::string name = t.name;
+	std::string name = t.str_val;
 
 	Token t2 = ts.get_token();
 	if (t2.type != Token::Types::OP_EQUAL)
@@ -210,11 +175,11 @@ double Calculator::declaration()
 }
 
 
-double Calculator::function() {
+double Calculator::print_function() {
 	//handles func '['expression']' from [expression] to [expression] step [expression]
 	Token exp_tkn = ts.get_token();
 
-	if(exp_tkn.name.empty()) 
+	if(exp_tkn.str_val.empty()) 
 		throw runtime_error("Expected expression after 'func' keyword");
 	
 	Token from_tkn = ts.get_token();
@@ -238,7 +203,7 @@ double Calculator::function() {
 	ts.get_token();
 
 	while (from <= to) {
-		std::stringstream exp_stream(exp_tkn.name + ";");
+		std::stringstream exp_stream(exp_tkn.str_val + ";");
 		Calculator c(exp_stream);
 		c.var_table.define("x", from);
 		out_stream << "\tF(" << from << ") = " << c.expression() << endl;
@@ -254,9 +219,9 @@ double Calculator::statement()
 	switch (t.type)
 	{
 	case Token::Types::VAR_DEF:
-		return declaration();
+		return var_declaration();
 	case Token::Types::FUNC_DEF:
-		return function();
+		return print_function();
 	default:
 		ts.put_back(t);
 		return expression();

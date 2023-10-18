@@ -17,7 +17,9 @@ endif()
 
 add_library(exp_calculator
     src/exp_calculator/exp_calculator.cpp
+    src/exp_calculator/token.cpp
     src/exp_calculator/token_stream.cpp
+    src/exp_calculator/variable_table.cpp
 )
 
 target_include_directories(exp_calculator

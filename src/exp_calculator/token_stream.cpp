@@ -1,4 +1,4 @@
-#include "exp_calculator.h"
+#include "token_stream.h"
 
 Token TokenStream::get_token() {
 	if (full) {
